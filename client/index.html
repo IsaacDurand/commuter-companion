@@ -1,0 +1,41 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Commuter Companion</title>
+  <!--Add stylesheet link here: <link rel="stylesheet" href="#"> -->
+</head>
+
+<body>
+  <h1>Commuter Companion</h1>
+  <p>Give us your commute and contact info, and we'll ping you if your train is running late.</p>
+  <form>
+    <p>
+      <label for="train">
+        Which train would you like to receive updates for?
+      </label>
+      <select name="train" id="train">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+    </p>
+    <p>
+      <label>
+        Your phone number (for text messages)
+        <input type="text" name="phone" id='phone'>
+      </label>
+    </p>
+    <p>
+      <label>
+        Your email address
+        <input type="email" name="email" id='email'>
+      </label>
+    </p>
+    <button type="submit" id='signup'>Save my info</button>
+  </form>
+
+  <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script> <!--I'd like to use browserify rather than this.-->
+  <script src='bundle.js'></script> 
+</body>
+
+</html>
