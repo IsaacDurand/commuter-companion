@@ -1,6 +1,7 @@
 // Start with vanilla JS and add jQuery if I'm so inspired?
 // console.log("You've successfully linked your files.");
 // var $ = require('jquery'); // I've installed browserify, so I'm not sure why I can't use require here.
+var $ = require('jquery');
 var saveUser = require('./../server/save-data');
 
 $(document).ready(function() {

@@ -4,7 +4,9 @@
   "description": "Commuter Companion sends you a text message if your Caltrain may be running late.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify client/index.js > bundle.js",
+    "watch": "watchify client/index.js -o bundle.js -v" // I'm having trouble getting this to run, so I'm rebuilding manually for now.
   },
   "author": "Isaac Durand",
   "license": "ISC",
@@ -13,6 +15,7 @@
     "jquery": "^2.2.0",
     "mysql": "^2.10.2",
     "pg": "^4.4.6",
-    "sequelize": "^3.19.2"
+    "sequelize": "^3.19.2",
+    "watchify": "^3.7.0"
   }
 }
