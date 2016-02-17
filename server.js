@@ -15,36 +15,43 @@ var server = http.createServer(app);
 // Import controllers
 // var eventCtrl = require('./controllers/event-controller');
 
+app.set('view engine', 'ejs');
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Set up routes
 app.get('/', function(req, res) {
-	res.sendFile(__dirname + '/client/index.html');
-});
-
-app.get('/main.js', function(req, res) {
-	res.sendFile(__dirname + '/client/main.js');
+	res.render(__dirname + '/client/index');
 });
 
 // I used unit 11 as a reference.
-app.post('/signup', function(req, res) {
+// app.post('/signup', function(req, res) {
 
-	// Add the user to my database
-	var userData = {};
-	var train = Number(req.body.train);
+// 	// Add the user to my database
+// 	var userData = {};
+// 	var train = Number(req.body.train);
 
-	userData.train = train;
-	userData.phone = Number(req.body.phone);
-	userData.email = req.body.email; // Security concerns here?	
-	createUser(userData);
+// 	userData.train = train;
+// 	userData.phone = Number(req.body.phone);
+// 	userData.email = req.body.email; // Security concerns here?	
+// 	createUser(userData);
 
 	// Console-log all tweets from Caltrain_News from the past day that mention the user's train.
 	// I've confirmed that the code below works with inputs that are numbers as well as inputs that are strings.
-	searchTwitter(train);
+
+	// Async issue: the variable tweets is undefined here. How can I resolve this? I don't want res.render to happen until searchTwitter has happened. Can I use middleware?
+	// var tweets = searchTwitter(train);
+	// console.log(`The value of tweets in app.post is ${tweets}`);
 
 	// Send the user to the thanks page
-	res.sendFile(__dirname + '/client/thanks.html');
+// 	res.render(__dirname + '/client/thanks', {tweets: tweets});
+// 	// res.render('/client/thanks.html'); // Fix this
 
+// });
+
+// Pseudocode
+app.post('/signup', createUser, searchTwitter, function(req, res) {
+	res.render(__dirname + '/client/thanks', {tweets: req.body.tweets, train: req.body.train});
 });
 
 // Listen

@@ -25,6 +25,18 @@ var User = sequelize.define('user', {
 //   console.log("Finished Syncing!");
 // });
 
-module.exports = function(dataObj) {
-  User.create(dataObj);
+// Add the user to my database
+function createUser(req, res, next) {
+  var userData = {};
+  var train = Number(req.body.train);
+
+  userData.train = train;
+  userData.phone = Number(req.body.phone);
+  userData.email = req.body.email; // Security concerns here?
+
+  User.create(userData);
+
+  next();
 }
+
+module.exports = createUser;

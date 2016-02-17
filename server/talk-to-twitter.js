@@ -18,17 +18,14 @@ var options = { method: 'GET',
      authorization: 'Bearer AAAAAAAAAAAAAAAAAAAAAB6qkQAAAAAANM11L5sdnNtIkt5vqO%2FlD%2FxOefU%3D66tgRy76Pyvkqdrr6EbFo1p73XW4gjd4PieXMevLozKsNuTHvj' } };
 
 // This function returns tweets that (1) were created within the past 12 hours and (2) mention the inputted train.
-function searchTwitter(train) {
-
-	console.log(`searchTwitter is running with an input of ${train}, which is a ${typeof train}`);
+function searchTwitter(req, res, next) {
 
 	request(options, function (error, response, body) {
-
-		console.log(`request is running`);
 
 	  if (error) throw new Error(error);
 
 	  var tweetArray = JSON.parse(body);
+	  var result = [];
 	  var currentTime = Date.now(); // number of milliseconds since 1 January 1970
 
 	  tweetArray.forEach(function(tweet) {
@@ -37,17 +34,15 @@ function searchTwitter(train) {
 	  	var timeDiff = (currentTime - tweetTime) / (60 * 60 * 1000); // in hours
 	  	
 	  	// This query seems to be pulling only tweets from the current day; I'm not sure why.
-	  	if (timeDiff <= 24 && tweet.text.indexOf(train) !== -1) {
+	  	// I confirmed that indexOf will search both the main text of the tweet and any hashtags.
+	  	// I'm filtering tweets here, but I can't get trim to work on tweet.text.
+	  	if (timeDiff <= 24 && tweet.text.indexOf(req.body.train) !== -1) result.push(tweet);
+  	});
 
-	  		// I confirmed that indexOf will search both the main text of the tweet and any hashtags.
-	  		// I'm filtering tweets here, but I can't get trim to work on tweet.text.
-	  		console.log(`Tweet created at ${tweet.created_at} (${timeDiff} hours ago)
-	  			${tweet.text}`);
-	  	}
-
-	  });
-
-	});
+	  req.body.tweets = result;
+		next();
+  });
+  // console.log(`The value of result in app.post is ${result}`);
 } 
 
 module.exports = searchTwitter;
