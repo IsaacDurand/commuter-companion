@@ -51,36 +51,52 @@ TwitterController.searchTwitter = function(req, res, next) {
 // Check Twitter periodically for new tweets from @caltrain_news
 TwitterController.checkForUpdates = function() {
 
+	// Create an options object to use in my request. Beware of mutating the original options object.
+	var optionsForCheck = { method: 'GET',
+	  url: 'https://api.twitter.com/1.1/statuses/user_timeline.json',
+	  qs: { screen_name: 'Caltrain_News', trim_user: true, exclude_replies: true },
+	  headers: 
+	   { 'postman-token': '4573cc8a-3267-4750-3574-4f7b692a8ab7',
+	     'cache-control': 'no-cache',
+	     authorization: 'Bearer AAAAAAAAAAAAAAAAAAAAAB6qkQAAAAAANM11L5sdnNtIkt5vqO%2FlD%2FxOefU%3D66tgRy76Pyvkqdrr6EbFo1p73XW4gjd4PieXMevLozKsNuTHvj' } };
+
+	// Create a function that we'll call repeatedly to send post requests.
+	function sendPostRequest() {
+
+		request(optionsForCheck, function (error, response, body) {
+
+			console.log('request is running');
+
+		  if (error) throw new Error(error);
+
+		  var tweetArray = JSON.parse(body);
+
+		  tweetArray.forEach(function(tweet) {
+
+		  	// For testing only: acknowledge the tweet.
+		  	console.log(`processing a tweet: ${tweet.text}`);
+
+		  	// See whether I need to alert anyone about this tweet.
+		  	// WRITE THIS FUNCTION
+
+		  	// Make sure since_id is still the greatest ID of all processed tweets.
+		  	if (!optionsForCheck.qs.since_id) optionsForCheck.qs.since_id = tweet.id;
+		  	if (tweet.id > optionsForCheck.qs.since_id) optionsForCheck.qs.since_id = tweet.id;
+		  	
+	  	});
+		});
+	}
+
 	// When the app launches, pull recent tweets and set the value of since_id.
-
-	// See whether I need to alert anyone about them. 
-
+		// Using a since_id of 0 did not work.
+	sendPostRequest();
+		
 	// Check periodically for new tweets.
-
-	// See whether I need to alert anyone about them.
-
-	var since_id = 0;
-
-	request(options, function (error, response, body) {
-
-	  if (error) throw new Error(error);
-
-	  var tweetArray = JSON.parse(body);
-
-	  tweetArray.forEach(function(tweet) {
-
-	  	// Set since_id to the greatest ID of all processed tweets.
-	  	if (tweet.id > since_id) since_id = tweet.id;
-	  	// console.log(`id: ${tweet.id}`);
-	  	// console.log(`created_at: ${tweet.created_at}`);
-	  	// console.log(since_id);
-  	});
-	});
-
-	// The value of since_id is now what I want to use for my next search.
-
 	setInterval(function() {
-		// console.log('Hello');
+
+		console.log('setInterval is running');
+		sendPostRequest();
+
 	}, 3000);
 
 }
