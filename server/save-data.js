@@ -82,26 +82,26 @@ dataController.findUsersToAlert = function(trainNum) {
       train: trainNum
     }
   })
-    .then(function(value) {
-      // the value is an object
-      console.log(`trainNum: ${trainNum} 
-        value: ${JSON.stringify(value)}`);
+    .then(function(users) {
+
+      if (users.length) {
+
+        var usersToAlert = '';
+
+        users.forEach(function(user) {
+          usersToAlert += `${user.name}, `;
+        });
+
+        usersToAlert = usersToAlert.slice(0, -2);
+
+        console.log(`Alert ${usersToAlert} about ${trainNum}`)
+
+        // I should probably incorporate the tweet into this too...
+      }
+
     }, function(reason) {
       console.log(`Error: ${reason}`);
     });
-
-  // .on('success', function(users) {
-  //   console.log(`users: ${users}`);
-  // });
-
-  /*
-    Post.findAll({
-    where: {
-      authorId: 2
-    }
-  });
-  // SELECT * FROM post WHERE authorId = 2
-  */
 
   // For now, make a list of these users and note that they need an alert?
   // Console-log something like "users to alert about train X"
