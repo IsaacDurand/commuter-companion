@@ -2,7 +2,6 @@
 // console.log("You've successfully linked your files.");
 // var $ = require('jquery'); // I've installed browserify, so I'm not sure why I can't use require here.
 var $ = require('jquery');
-var saveUser = require('./../server/save-data');
 
 $(document).ready(function() {
     $('#signup').on('click', function(event) {
@@ -16,7 +15,6 @@ $(document).ready(function() {
     	userData.train = $('#train').val();
     	userData.phone = $('#phone').val();
     	userData.email = $('#email').val();
-    	saveUser(userData);
     });
 });
 // document.getElementById('signup').addEventListener('click', function(event) {
