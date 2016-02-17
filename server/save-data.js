@@ -17,7 +17,7 @@ var User = sequelize.define('user', {
     autoIncrement: true
   },
   // Add additional conditions to validate these values or at the very least make sure they're not null.
-  phone: Sequelize.INTEGER,
+  phone: Sequelize.BIGINT,
   train: Sequelize.INTEGER,
   email: Sequelize.STRING
   // createdAt: Sequelize.DATE,
@@ -38,7 +38,7 @@ var User = sequelize.define('user', {
 // User.create(userData);
 
 module.exports = function(dataObj) {
-  User.create(obj);
+  User.create(dataObj);
 }
 
 // I will eventually use this to add entries to the database. How will I get the data in here? I think it should be a JS object... I can make this the callback function for a post request, right? I can look at what I did for Slack... What will the request body look like?

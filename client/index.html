@@ -8,7 +8,7 @@
 <body>
   <h1>Commuter Companion</h1>
   <p>Give us your commute and contact info, and we'll ping you if your train is running late.</p>
-  <form>
+  <form method="POST" action='/signup'>
     <p>
       <label for="train">
         Which train would you like to receive updates for?
@@ -17,6 +17,11 @@
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
+        <!-- Add real train numbers: 101
+        103
+        305
+        207
+        309-->
       </select>
     </p>
     <p>
@@ -31,10 +36,11 @@
         <input type="email" name="email" id='email'>
       </label>
     </p>
-    <button type="submit" id='signup'>Save my info</button>
+    <input type='submit' value='Save my info' id='signup'>
   </form>
 
-  <script src='./../bundle.js'></script> 
+  <!-- I'm not actually using these tags right now: <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+  <script src='main.js'></script> -->
 </body>
 
 </html>
