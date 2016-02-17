@@ -16,7 +16,8 @@ var User = sequelize.define('user', {
   // Add additional conditions to validate these values or at the very least make sure they're not null.
   phone: Sequelize.BIGINT,
   train: Sequelize.INTEGER,
-  email: Sequelize.STRING
+  email: Sequelize.STRING,
+  name: Sequelize.STRING
   // Sequlize adds createdAt and updatedAt fields automatically.
 });
 
@@ -33,6 +34,7 @@ function createUser(req, res, next) {
   userData.train = train;
   userData.phone = Number(req.body.phone);
   userData.email = req.body.email; // Security concerns here?
+  userData.name = req.body.name; // Security concerns here?
 
   User.create(userData);
 
