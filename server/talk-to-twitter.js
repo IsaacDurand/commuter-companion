@@ -8,6 +8,8 @@ var encodedBearerTokenCredentials = new Buffer(unencodedBearerTokenCredentials).
 var contentType ='Content-Type: application/x-www-form-urlencoded;charset=UTF-8';
 var authorizationValue = 'Basic ' + encodedBearerTokenCredentials + contentType;
 
+var TwitterController = {};
+
 // Need a large count - though probably not 100 - to get tweets from previous days.
 var options = { method: 'GET',
   url: 'https://api.twitter.com/1.1/statuses/user_timeline.json',
@@ -18,7 +20,7 @@ var options = { method: 'GET',
      authorization: 'Bearer AAAAAAAAAAAAAAAAAAAAAB6qkQAAAAAANM11L5sdnNtIkt5vqO%2FlD%2FxOefU%3D66tgRy76Pyvkqdrr6EbFo1p73XW4gjd4PieXMevLozKsNuTHvj' } };
 
 // This function returns tweets that (1) were created within the past 12 hours and (2) mention the inputted train.
-function searchTwitter(req, res, next) {
+TwitterController.searchTwitter = function(req, res, next) {
 
 	request(options, function (error, response, body) {
 
@@ -45,7 +47,52 @@ function searchTwitter(req, res, next) {
   // console.log(`The value of result in app.post is ${result}`);
 } 
 
-module.exports = searchTwitter;
+// Will setInterval work here, or will it cause trouble?
+// Check Twitter periodically for new tweets from @caltrain_news
+TwitterController.checkForUpdates = function() {
+
+	// When the app launches, pull recent tweets and set the value of since_id.
+
+	// See whether I need to alert anyone about them. 
+
+	// Check periodically for new tweets.
+
+	// See whether I need to alert anyone about them.
+
+	var since_id = 0;
+
+	request(options, function (error, response, body) {
+
+	  if (error) throw new Error(error);
+
+	  var tweetArray = JSON.parse(body);
+
+	  tweetArray.forEach(function(tweet) {
+
+	  	// Set since_id to the greatest ID of all processed tweets.
+	  	if (tweet.id > since_id) since_id = tweet.id;
+	  	// console.log(`id: ${tweet.id}`);
+	  	// console.log(`created_at: ${tweet.created_at}`);
+	  	// console.log(since_id);
+  	});
+	});
+
+	// The value of since_id is now what I want to use for my next search.
+
+	setInterval(function() {
+		// console.log('Hello');
+	}, 3000);
+
+}
+
+// From https://nodejs.org/api/timers.html#timers_setinterval_callback_delay_arg:
+// setInterval(callback, delay[, arg][, ...])#
+// To schedule the repeated execution of callback every delay milliseconds. Returns a intervalObject for possible use with clearInterval(). Optionally you can also pass arguments to the callback.
+
+// To follow browser behavior, when using delays larger than 2147483647 milliseconds (approximately 25 days) or less than 1, Node.js will use 1 as the delay.
+
+
+module.exports = TwitterController;
 
 // Old notes
 // Here's the issue I faced when querying https://api.twitter.com/1.1/search/tweets.json. I saw the tweets in Postman but not in the terminal: http://stackoverflow.com/questions/29062363/twitter-search-api-returns-no-tweets.

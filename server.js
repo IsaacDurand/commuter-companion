@@ -8,7 +8,7 @@ var bodyParser = require('body-parser');
 var request = require('request');
 
 var createUser = require('./server/save-data');
-var searchTwitter = require('./server/talk-to-twitter');
+var TwitterController = require('./server/talk-to-twitter');
 
 var server = http.createServer(app);
 
@@ -18,6 +18,8 @@ var server = http.createServer(app);
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({ extended: true }));
+
+TwitterController.checkForUpdates(); // This function runs whenever I npm start.
 
 // Set up routes
 app.get('/', function(req, res) {
@@ -50,7 +52,7 @@ app.get('/', function(req, res) {
 // });
 
 // Pseudocode
-app.post('/signup', createUser, searchTwitter, function(req, res) {
+app.post('/signup', createUser, TwitterController.searchTwitter, function(req, res) {
 	res.render(__dirname + '/client/thanks', {tweets: req.body.tweets, train: req.body.train});
 });
 
