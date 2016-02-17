@@ -15,7 +15,7 @@ console.log(authorizationValue);
 // Trying a different API
 var options = { method: 'GET',
   url: 'https://api.twitter.com/1.1/statuses/user_timeline.json',
-  qs: { screen_name: 'Caltrain_News', count: '20', trim_user: true, exclude_replies: true },
+  qs: { screen_name: 'Caltrain_News', count: '30', trim_user: true, exclude_replies: true },
   headers: 
    { 'postman-token': '4573cc8a-3267-4750-3574-4f7b692a8ab7',
      'cache-control': 'no-cache',
@@ -24,8 +24,9 @@ var options = { method: 'GET',
 request(options, function (error, response, body) {
   if (error) throw new Error(error);
   var tweetArray = JSON.parse(body);
+  // Can I filter the tweets to see whether they're from today?
   tweetArray.forEach(function(tweet) {
-  	console.log(`Tweet from ${tweet.created_at}: ${tweet.text}
+  	console.log(`Tweet from ${tweet.created_at}
   		`);
   });
 });
