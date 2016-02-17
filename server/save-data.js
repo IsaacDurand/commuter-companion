@@ -81,12 +81,14 @@ dataController.findUsersToAlert = function(trainNum) {
     where: {
       train: trainNum
     }
-  }).then(function(value) {
-    console.log(`trainNum: ${trainNum} 
-      value: ${typeof value}`);
-  }, function(reason) {
-    console.log(`reason: ${reason}`);
-  });
+  })
+    .then(function(value) {
+      // the value is an object
+      console.log(`trainNum: ${trainNum} 
+        value: ${JSON.stringify(value)}`);
+    }, function(reason) {
+      console.log(`Error: ${reason}`);
+    });
 
   // .on('success', function(users) {
   //   console.log(`users: ${users}`);
