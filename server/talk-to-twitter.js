@@ -9,6 +9,7 @@ var contentType ='Content-Type: application/x-www-form-urlencoded;charset=UTF-8'
 var authorizationValue = 'Basic ' + encodedBearerTokenCredentials + contentType;
 
 var TwitterController = {};
+var dataController = require('./save-data');
 
 // Need a large count - though probably not 100 - to get tweets from previous days.
 var options = { method: 'GET',
@@ -47,7 +48,6 @@ TwitterController.searchTwitter = function(req, res, next) {
   // console.log(`The value of result in app.post is ${result}`);
 } 
 
-// Will setInterval work here, or will it cause trouble?
 // Check Twitter periodically for new tweets from @caltrain_news
 TwitterController.checkForUpdates = function() {
 
@@ -60,12 +60,13 @@ TwitterController.checkForUpdates = function() {
 	     'cache-control': 'no-cache',
 	     authorization: 'Bearer AAAAAAAAAAAAAAAAAAAAAB6qkQAAAAAANM11L5sdnNtIkt5vqO%2FlD%2FxOefU%3D66tgRy76Pyvkqdrr6EbFo1p73XW4gjd4PieXMevLozKsNuTHvj' } };
 
-	// Create a function that we'll call repeatedly to send post requests.
+	// Create a function I can use to submit post requests periodically.
 	function sendPostRequest() {
 
+		// For testing only
+		console.log('sending post request');
+		
 		request(optionsForCheck, function (error, response, body) {
-
-			console.log('request is running');
 
 		  if (error) throw new Error(error);
 
@@ -74,39 +75,25 @@ TwitterController.checkForUpdates = function() {
 		  tweetArray.forEach(function(tweet) {
 
 		  	// For testing only: acknowledge the tweet.
-		  	console.log(`processing a tweet: ${tweet.text}`);
+		  	// console.log(`processing a tweet: ${tweet.text}`);
 
-		  	// See whether I need to alert anyone about this tweet.
-		  	// WRITE THIS FUNCTION
+		  	// Check whether the tweet mentions any of the trains on the master list.
+		  	dataController.checkWhetherTweetMentionsTrains(tweet);
 
 		  	// Make sure since_id is still the greatest ID of all processed tweets.
 		  	if (!optionsForCheck.qs.since_id) optionsForCheck.qs.since_id = tweet.id;
 		  	if (tweet.id > optionsForCheck.qs.since_id) optionsForCheck.qs.since_id = tweet.id;
 		  	
 	  	});
-		});
+		});		
 	}
 
-	// When the app launches, pull recent tweets and set the value of since_id.
-		// Using a since_id of 0 did not work.
+	// On launch, check for new tweets and update since_id.
 	sendPostRequest();
 		
-	// Check periodically for new tweets.
-	setInterval(function() {
-
-		console.log('setInterval is running');
-		sendPostRequest();
-
-	}, 3000);
-
+	// Periodically check for new tweets and update since_id.
+	setInterval(sendPostRequest, 0.5 * 60 * 1000); // Pulling data every five minutes to be sure I don't exceed the limits.
 }
-
-// From https://nodejs.org/api/timers.html#timers_setinterval_callback_delay_arg:
-// setInterval(callback, delay[, arg][, ...])#
-// To schedule the repeated execution of callback every delay milliseconds. Returns a intervalObject for possible use with clearInterval(). Optionally you can also pass arguments to the callback.
-
-// To follow browser behavior, when using delays larger than 2147483647 milliseconds (approximately 25 days) or less than 1, Node.js will use 1 as the delay.
-
 
 module.exports = TwitterController;
 

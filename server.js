@@ -1,4 +1,3 @@
-
 // Code below is from database project
 var express = require('express');
 var app = express();
@@ -7,7 +6,7 @@ var fs = require('fs');
 var bodyParser = require('body-parser');
 var request = require('request');
 
-var createUser = require('./server/save-data');
+var dataController = require('./server/save-data');
 var TwitterController = require('./server/talk-to-twitter');
 
 var server = http.createServer(app);
@@ -51,8 +50,7 @@ app.get('/', function(req, res) {
 
 // });
 
-// Pseudocode
-app.post('/signup', createUser, TwitterController.searchTwitter, function(req, res) {
+app.post('/signup', dataController.createUser, TwitterController.searchTwitter, function(req, res) {
 	res.render(__dirname + '/client/thanks', {tweets: req.body.tweets, train: req.body.train});
 });
 
