@@ -13,9 +13,10 @@ var authorizationValue = 'Basic ' + encodedBearerTokenCredentials + contentType;
 console.log(authorizationValue);
 
 // Trying a different API
+// Need a large count - though probably not 100 - to get tweets from previous days.
 var options = { method: 'GET',
   url: 'https://api.twitter.com/1.1/statuses/user_timeline.json',
-  qs: { screen_name: 'Caltrain_News', count: '30', trim_user: true, exclude_replies: true },
+  qs: { screen_name: 'Caltrain_News', count: '10', trim_user: true, exclude_replies: true },
   headers: 
    { 'postman-token': '4573cc8a-3267-4750-3574-4f7b692a8ab7',
      'cache-control': 'no-cache',
@@ -25,10 +26,17 @@ request(options, function (error, response, body) {
   if (error) throw new Error(error);
   var tweetArray = JSON.parse(body);
   // Can I filter the tweets to see whether they're from today?
+  // tweet.created_at is a string
+  var currentTime = Date.now(); // number of milliseconds elapsed since 1 January 1970 00:00:00 UTC
   tweetArray.forEach(function(tweet) {
-  	console.log(`Tweet from ${tweet.created_at}
-  		`);
-  });
+  	var tweetTime = Date.parse(tweet.created_at); // number of milliseconds between 1 January 1970 and when the tweet was created
+  	var timeDiff = (currentTime - tweetTime) / (60 * 60 * 1000); // in hours
+  	if (timeDiff <= 2 && tweet.text.indexOf('22') !== -1) {
+  		// I'm filtering tweets here, but I can't get trim to work on tweet.text.
+  		console.log(`Tweet created at ${tweet.created_at} (${timeDiff} hours ago)
+  			${tweet.text}`);
+  	}
+  });	
 });
 
 // var options = {
