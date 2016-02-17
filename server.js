@@ -46,43 +46,6 @@ app.post('/signup', function(req, res) {
 	res.sendFile(__dirname + '/client/thanks.html');
 });
 
-// Talk to Twitter
-var consumerKey = 'sctUvvfMwxXTCcMziXV1cWxJl';
-var consumerSecret = '7VEkjATcDahRCuouE8KKqF7xLOuL35Wj59DmgrNbglZopTUmgz';
-// I did not URL encode the values above.
-var unencodedBearerTokenCredentials = `${consumerKey}:${consumerSecret}`;
-var encodedBearerTokenCredentials = new Buffer(unencodedBearerTokenCredentials).toString('base64');
-var contentType ='Content-Type: application/x-www-form-urlencoded;charset=UTF-8';
-var authorizationValue = 'Basic ' + encodedBearerTokenCredentials + contentType;
-console.log(authorizationValue);
-
-var options = {
-	method: 'PUT',
-  url: 'https://api.twitter.com/oauth2/token',
-  headers: {
-    'Authorization': authorizationValue
-  },
-  body: 'grant_type=client_credentials'
-};
-
-request(options,
-	function (error, response, body) {
-    if (error) {
-      return console.error('error:', error);
-    }
-    console.log('success?');
-    console.log(response.body);
-    // console.log(response); // This is giving me that huge object I hate...
-	}
-);
-// app.post('https://api.twitter.com/oauth2/token', function)
-// The value calculated in step 1 must be exchanged for a bearer token by issuing a request to POST oauth2 / token:
-
-// The request must be a HTTP POST request.
-// The request must include an Authorization header with the value of Basic <base64 encoded value from step 1>.
-// The request must include a Content-Type header with the value of application/x-www-form-urlencoded;charset=UTF-8.
-// The body of the request must be grant_type=client_credentials.
-
 // Listen
 server.listen(3000, function() {
   console.log('listening at http://localhost:3000');
