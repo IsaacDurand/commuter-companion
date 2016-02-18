@@ -58,12 +58,7 @@ dataController.checkWhetherTweetMentionsTrains = function(tweet) {
     if (tweet.text.indexOf(trainNum) > -1) {
 
       // If the tweet mentions a train, find the appropriate users to alert.
-      // I'm still writing this function.
       dataController.findUsersToAlert(trainNum);
-      
-      // For testing only - I've confirmed that it's logging what I expect.
-      // console.log(`This tweet mentions train ${trainNum}:
-      //   ${tweet.text}`) 
     }
 
   });
@@ -71,45 +66,38 @@ dataController.checkWhetherTweetMentionsTrains = function(tweet) {
 
 dataController.findUsersToAlert = function(trainNum) {
 
-  // I used the test below to confirm that this function is running when it should.
-  // console.log(`findUsersToAlert is running`);
-
   // Find users who are subscribed to this train.
-  // SELECT * FROM users where train=221
-  // The query below works if I don't attach anything after findAll
-  User.findAll({
-    where: {
-      train: trainNum
-    }
-  })
-    .then(function(users) {
+  // User.findAll({
+  //   where: {
+  //     train: trainNum
+  //   }
+  // })
+  //   .then(function(users) {
 
-      if (users.length) {
+  //     if (users.length) {
 
-        var usersToAlert = '';
+  //       var usersToAlert = '';
 
-        users.forEach(function(user) {
-          usersToAlert += `${user.name}, `;
-        });
+  //       users.forEach(function(user) {
+  //         usersToAlert += `${user.name}, `;
+  //       });
 
-        usersToAlert = usersToAlert.slice(0, -2);
+  //       usersToAlert = usersToAlert.slice(0, -2);
 
-        console.log(`Alert ${usersToAlert} about ${trainNum}`)
+  //       console.log(`Users to alert about ${trainNum}:
+  //         ${usersToAlert}`)
 
-        // I should probably incorporate the tweet into this too...
-      }
+  //       // I should probably incorporate the tweet into this too...
+  //     }
 
-    }, function(reason) {
-      console.log(`Error: ${reason}`);
-    });
+  //   }, function(reason) {
+  //     console.log(`Error: ${reason}`);
+  //   });
 
   // For now, make a list of these users and note that they need an alert?
-  // Console-log something like "users to alert about train X"
 
   // Then maybe make a page where I can see this info?
-
 }
 
-// In the news: 155, 221, 225, 323
 
 module.exports = dataController;

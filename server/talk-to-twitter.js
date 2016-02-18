@@ -49,7 +49,10 @@ TwitterController.searchTwitter = function(req, res, next) {
 } 
 
 // Check Twitter periodically for new tweets from @caltrain_news
-TwitterController.checkForUpdates = function() {
+TwitterController.checkForUpdates = function(req, res, next) {
+
+	req.body.usersToPing = {};
+	req.body.tweetsByTrain = {};
 
 	// Create an options object to use in my request. Beware of mutating the original options object.
 	var optionsForCheck = { method: 'GET',
@@ -62,9 +65,6 @@ TwitterController.checkForUpdates = function() {
 
 	// Create a function I can use to submit post requests periodically.
 	function sendPostRequest() {
-
-		// For testing only
-		console.log('sending post request');
 		
 		request(optionsForCheck, function (error, response, body) {
 
@@ -74,9 +74,6 @@ TwitterController.checkForUpdates = function() {
 
 		  tweetArray.forEach(function(tweet) {
 
-		  	// For testing only: acknowledge the tweet.
-		  	// console.log(`processing a tweet: ${tweet.text}`);
-
 		  	// Check whether the tweet mentions any of the trains on the master list.
 		  	dataController.checkWhetherTweetMentionsTrains(tweet);
 
@@ -85,6 +82,12 @@ TwitterController.checkForUpdates = function() {
 		  	if (tweet.id > optionsForCheck.qs.since_id) optionsForCheck.qs.since_id = tweet.id;
 		  	
 	  	});
+
+		  // For testing only: I confirmed that usersToPing is an object.
+		  console.log(`sendPostRequest ran.`);
+	  	// console.log(`sendPostRequest ran. The value of usersToPing is ${req.body.usersToPing}`);
+
+	  	next();
 		});		
 	}
 
