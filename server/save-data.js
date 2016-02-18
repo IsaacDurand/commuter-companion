@@ -68,7 +68,7 @@ dataController.findTrainsMentionedInTweets = function(req, res, next) {
 
           req.body.trainUpdate[trainNum] = {
             tweetsAboutThisTrain: [],
-            usersToUpdate: []
+            // usersToUpdate: []
           };
         }
 
@@ -87,56 +87,39 @@ dataController.findTrainsMentionedInTweets = function(req, res, next) {
 
 dataController.findUsersToAlert = function(req, res, next) {
 
-  // Count the trains in trainUpdate
-  var numTrains = 0;  
+  // Create a query object
+  var query = {where: {$or: []}};
+
   for (var trainNum in req.body.trainUpdate) {
-    numTrains++;
+
+    if (trainNum.length === 3) query.where.$or.push({train: trainNum});
   }
-  var counter = 0;
 
-  // For each train in trainUpdate...
-  for (var trainNum in req.body.trainUpdate) {
+  // Find any users who are subscribed to the trains in trainUpdate.
+  User.findAll(query)
 
-    // Find any users who are subscribed to that train.
-    User.findAll({
-      where: {
-        train: trainNum
+  // Add them to the train's usersToUpdate array.
+    .then(function(users) {
+
+      if (users.length) {
+
+        users.forEach(function(user) {
+
+          var userData = {};
+          userData.name = user.name;
+          userData.id = user.id;
+
+          req.body.trainUpdate.usersToUpdate.push(userData);
+
+        });
+
+        next();
       }
-    })
 
-    // Add them to the train's usersToUpdate array.
-      .then(function(users) {
-
-        if (users.length) {
-          console.log('Inside if');
-
-          users.forEach(function(user) {
-
-            var userData = {};
-            userData.name = user.name;
-            userData.id = user.id;
-
-            req.body.trainUpdate[trainNum].usersToUpdate.push(userData);
-
-          });
-        }
-
-        counter++;
-
-      // Log any errors.
-      }, function(reason) {
-        console.log(`Error: ${reason}`);
-      });
-  }
-
-  while (counter < numTrains) {
-    setInterval(function() {
-      console.log(`waiting: counter is ${counter} and numTrains is ${numTrains}`);
-    }, 1000)
-  }
-
-  next();
+    // Log any errors.
+    }, function(reason) {
+      console.log(`Error: ${reason}`);
+    });
 }
-
 
 module.exports = dataController;

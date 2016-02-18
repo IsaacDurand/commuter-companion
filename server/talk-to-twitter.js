@@ -51,6 +51,7 @@ TwitterController.searchTwitter = function(req, res, next) {
 TwitterController.checkForUpdates = function(req, res, next) {
 
 	req.body.trainUpdate = {};
+	req.body.trainUpdate.usersToUpdate = [];
 
 	// Create an options object to use in my request. Beware of mutating the original options object.
 	var optionsForCheck = { method: 'GET',
