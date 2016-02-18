@@ -1,6 +1,7 @@
 // The code below is adapted from unit 12.
 // I used "createdb commuter-companion" in the command line to create a database called commuter-companion
 
+var request = require('request'); // I'm using this only for setInterval
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('commuter-companion', 'isaacdurand', 'kamv2014', { // This seems insecure...
   host: 'localhost',
@@ -86,6 +87,13 @@ dataController.findTrainsMentionedInTweets = function(req, res, next) {
 
 dataController.findUsersToAlert = function(req, res, next) {
 
+  // Count the trains in trainUpdate
+  var numTrains = 0;  
+  for (var trainNum in req.body.trainUpdate) {
+    numTrains++;
+  }
+  var counter = 0;
+
   // For each train in trainUpdate...
   for (var trainNum in req.body.trainUpdate) {
 
@@ -99,8 +107,6 @@ dataController.findUsersToAlert = function(req, res, next) {
     // Add them to the train's usersToUpdate array.
       .then(function(users) {
 
-        console.log(`Inside then: users.length is ${users.length}`);
-
         if (users.length) {
           console.log('Inside if');
 
@@ -113,18 +119,23 @@ dataController.findUsersToAlert = function(req, res, next) {
             req.body.trainUpdate[trainNum].usersToUpdate.push(userData);
 
           });
-
         }
 
-        next();
+        counter++;
+
       // Log any errors.
       }, function(reason) {
         console.log(`Error: ${reason}`);
       });
   }
 
-  
-  
+  while (counter < numTrains) {
+    setInterval(function() {
+      console.log(`waiting: counter is ${counter} and numTrains is ${numTrains}`);
+    }, 1000)
+  }
+
+  next();
 }
 
 
