@@ -27,8 +27,10 @@ app.post('/signup', dataController.createUser, TwitterController.searchTwitter, 
 	res.render(__dirname + '/client/thanks', {tweets: req.body.tweets, train: req.body.train});
 });
 
-app.get('/master', TwitterController.checkForUpdates, /*middleware,*/ function(req, res) {
-	res.render(__dirname + '/client/master', {usersToPing: JSON.stringify(req.body.usersToPing)});
+app.get('/master', TwitterController.checkForUpdates, dataController.findTrainsMentionedInTweets, dataController.findUsersToAlert, function(req, res) {
+	res.type('json');
+	res.send(JSON.stringify(req.body.trainUpdate));
+	// res.render(__dirname + '/client/master', {trainUpdate: JSON.stringify(req.body.trainUpdate)});
 });
 
 // Listen

@@ -45,14 +45,12 @@ TwitterController.searchTwitter = function(req, res, next) {
 	  req.body.tweets = result;
 		next();
   });
-  // console.log(`The value of result in app.post is ${result}`);
 } 
 
 // Check Twitter periodically for new tweets from @caltrain_news
 TwitterController.checkForUpdates = function(req, res, next) {
 
-	req.body.usersToPing = {};
-	req.body.tweetsByTrain = {};
+	req.body.trainUpdate = {};
 
 	// Create an options object to use in my request. Beware of mutating the original options object.
 	var optionsForCheck = { method: 'GET',
@@ -70,22 +68,14 @@ TwitterController.checkForUpdates = function(req, res, next) {
 
 		  if (error) throw new Error(error);
 
-		  var tweetArray = JSON.parse(body);
+		  // JSON.parse(body) will yield an array of tweets.
+		  req.body.rawTweets = JSON.parse(body);
 
-		  tweetArray.forEach(function(tweet) {
-
-		  	// Check whether the tweet mentions any of the trains on the master list.
-		  	dataController.checkWhetherTweetMentionsTrains(tweet);
-
+		  // tweetArray.forEach(function(tweet) {
 		  	// Make sure since_id is still the greatest ID of all processed tweets.
-		  	if (!optionsForCheck.qs.since_id) optionsForCheck.qs.since_id = tweet.id;
-		  	if (tweet.id > optionsForCheck.qs.since_id) optionsForCheck.qs.since_id = tweet.id;
-		  	
-	  	});
-
-		  // For testing only: I confirmed that usersToPing is an object.
-		  console.log(`sendPostRequest ran.`);
-	  	// console.log(`sendPostRequest ran. The value of usersToPing is ${req.body.usersToPing}`);
+		  	// if (!optionsForCheck.qs.since_id) optionsForCheck.qs.since_id = tweet.id;
+		  	// if (tweet.id > optionsForCheck.qs.since_id) optionsForCheck.qs.since_id = tweet.id;
+	  	// });
 
 	  	next();
 		});		
@@ -95,7 +85,7 @@ TwitterController.checkForUpdates = function(req, res, next) {
 	sendPostRequest();
 		
 	// Periodically check for new tweets and update since_id.
-	setInterval(sendPostRequest, 0.5 * 60 * 1000); // Pulling data every five minutes to be sure I don't exceed the limits.
+	// setInterval(sendPostRequest, 0.5 * 60 * 1000); // Pulling data every five minutes to be sure I don't exceed the limits.
 }
 
 module.exports = TwitterController;

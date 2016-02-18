@@ -51,52 +51,80 @@ dataController.southboundTrains = [102, 104, 206, 208, 210, 312, 314, 216, 218, 
 
 dataController.validTrainNumbers = dataController.northboundTrains.concat(dataController.southboundTrains); // I console-logged this and confirmed that it's correct.
 
-dataController.checkWhetherTweetMentionsTrains = function(tweet) {
+dataController.findTrainsMentionedInTweets = function(req, res, next) {
   
-  this.validTrainNumbers.forEach(function(trainNum) {
-  
-    if (tweet.text.indexOf(trainNum) > -1) {
+  // Check each tweet...
+  req.body.rawTweets.forEach(function(tweet) {
 
-      // If the tweet mentions a train, find the appropriate users to alert.
-      dataController.findUsersToAlert(trainNum);
-    }
+    // ...for each train 
+    dataController.validTrainNumbers.forEach(function(trainNum) {
 
+      // If the tweet mentions the train...
+      if (tweet.text.indexOf(trainNum) > -1) {
+
+        // Make sure that there is a key for that train on trainUpdate. If not, create one.
+        if (!req.body.trainUpdate[trainNum]) {
+
+          req.body.trainUpdate[trainNum] = {
+            tweetsAboutThisTrain: [],
+            usersToUpdate: []
+          };
+        }
+
+        var tweetData = {};
+        tweetData.time = (new Date(tweet.created_at)).toLocaleTimeString();
+        tweetData.text = tweet.text;
+
+        req.body.trainUpdate[trainNum].tweetsAboutThisTrain.push(tweetData);
+
+      }
+    });
   });
+
+  next();
 }
 
-dataController.findUsersToAlert = function(trainNum) {
+dataController.findUsersToAlert = function(req, res, next) {
 
-  // Find users who are subscribed to this train.
-  // User.findAll({
-  //   where: {
-  //     train: trainNum
-  //   }
-  // })
-  //   .then(function(users) {
+  // For each train in trainUpdate...
+  for (var trainNum in req.body.trainUpdate) {
 
-  //     if (users.length) {
+    // Find any users who are subscribed to that train.
+    User.findAll({
+      where: {
+        train: trainNum
+      }
+    })
 
-  //       var usersToAlert = '';
+    // Add them to the train's usersToUpdate array.
+      .then(function(users) {
 
-  //       users.forEach(function(user) {
-  //         usersToAlert += `${user.name}, `;
-  //       });
+        console.log(`Inside then: users.length is ${users.length}`);
 
-  //       usersToAlert = usersToAlert.slice(0, -2);
+        if (users.length) {
+          console.log('Inside if');
 
-  //       console.log(`Users to alert about ${trainNum}:
-  //         ${usersToAlert}`)
+          users.forEach(function(user) {
 
-  //       // I should probably incorporate the tweet into this too...
-  //     }
+            var userData = {};
+            userData.name = user.name;
+            userData.id = user.id;
 
-  //   }, function(reason) {
-  //     console.log(`Error: ${reason}`);
-  //   });
+            req.body.trainUpdate[trainNum].usersToUpdate.push(userData);
 
-  // For now, make a list of these users and note that they need an alert?
+          });
 
-  // Then maybe make a page where I can see this info?
+        }
+
+        next();
+      // Log any errors.
+      }, function(reason) {
+        console.log(`Error: ${reason}`);
+      });
+  }
+
+  
+  
 }
 
 
